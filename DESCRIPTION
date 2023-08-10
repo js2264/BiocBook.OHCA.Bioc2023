@@ -20,7 +20,15 @@ Imports:
     HiCool, 
     HiCExperiment, 
     GenomicRanges,
-    cowplot
+    cowplot,
+    rtracklayer, 
+    GenomicFeatures,
+    Biostrings, 
+    BSgenome.Scerevisiae.UCSC.sacCer3, 
+    WGCNA, 
+    Rfast,
+    terra, 
+    patchwork
 Suggests:
     glue,
     rebook,
