@@ -1,5 +1,5 @@
 book:
-  title: "BiocBook.OHCA.Bioc2023"
+  title: "Hi-C analysis with Bioconductor<br>Package Demo<br>Bioc2023 Conference"
   chapters:
     - index.qmd
     - pages/slides.qmd
@@ -15,8 +15,8 @@ book:
         menu:
           - text: Source Code
             url:  https://github.com/js2264/BiocBook.OHCA.Bioc2023/
-          - text: Browse version `devel`
-            url:  https://js2264.github.io/BiocBook.OHCA.Bioc2023/devel/
+          - text: Browse version `3.17`
+            url:  https://js2264.github.io/BiocBook.OHCA.Bioc2023/3.17/
     style: "docked"
     background: "light"
     collapse-level: 5

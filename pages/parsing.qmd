@@ -1,12 +1,10 @@
 # Parsing Hi-C data in R
 
 ```{r}
-#| eval: true
 #| echo: false
 #| results: "hide"
 #| message: false
 #| warning: false
-source("_common.R")
 suppressPackageStartupMessages({
     library(GenomicRanges)
     library(HiContactsData)
@@ -15,24 +13,12 @@ suppressPackageStartupMessages({
 })
 ```
 
-::: {.callout-tip icon='true'}
-## Docker image 
-All the packages used in this demo are available in the following `docker` image: 
-
-```{sh filename = 'sh'}
-#| eval: false
-docker run -it -e PASSWORD=OHCA -p 8787:8787 ghcr.io/js2264/ohca:bioc_RELEASE_3_17 R
-```
-
-Note that this also opens up an `RStudio` instance available at `https://localhost:8787/`.
-:::
-
 ## Processing Hi-C paired-end reads in R
 
 ### Runninng `HiCool` 
 
 A pair of `fastq` files can be parsed into `.pairs` and `.(m)cool` files with 
-`HiCool`. 
+`HiCool`, thanks to the self-managed `basilisk` environment. 
 
 ```{r filename = 'R'}
 library(HiCool)
@@ -40,7 +26,9 @@ HiCool:::env_HiCool
 ```
 
 ::: {.callout-tip collapse="true"} 
+
 #### `HiCool` vs. `hicstuff` 👇
+
 `HiCool` mostly operates as a wrapper to the lightweight python-based 
 [`hicstuff` library](https://hicstuff.readthedocs.io/en/latest/). What 
 `HiCool` really does is running `hicstuff pipeline`. You can replicate 
@@ -96,6 +84,7 @@ hicstuff pipeline --help
 ##        -t | --threads=INT        Number of threads to allocate.
 ##                                  [default: 1].
 ```
+
 :::
 
 A call to `HiCool()` triggers `hicstuff` pipeline to process `fastq` files 
@@ -103,7 +92,6 @@ into `.pairs` and `.(m)cool` files, and returns a `CoolFile` object in `R`, alon
 with HTML reports.
 
 ```{r filename = 'R'}
-#| eval: false
 library(HiContactsData)
 r1 <- HiContactsData(sample = 'yeast_wt', format = 'fastq_R1')
 r2 <- HiContactsData(sample = 'yeast_wt', format = 'fastq_R2')
@@ -120,9 +108,7 @@ hcf <- HiCool(
 You can check the generated output files placed in the `HiCool/` directory. 
 
 ```{r}
-hcf <- HiCool::importHiCoolFolder('results/HiCool', hash = 'LHMXWE')
 hcf
-fs::dir_tree('results/HiCool/')
 ```
 
 - The `*.pairs` and `*.mcool` files are the pairs and contact matrix files, respectively. **These are the output files the end-user is generally looking for.**
@@ -209,10 +195,18 @@ Read the following sections from the OHCA book:
 - [HiCExperiment class presentation](https://jserizay.com/OHCA/data-representation.html#hicexperiment-class)
 - [HiCExperiment class manipulation](https://jserizay.com/OHCA/parsing.html)
 
-## Session info 
+# Session info {-}
 
-```{r}
-#| echo: false
-#| eval: true
-sessioninfo::session_info()
+::: {.callout-note collapse="true"}
+
+## Click to expand 👇
+
+```{r "session info"}
+#| cache: false
+sessioninfo::session_info(
+    installed.packages()[,"Package"], 
+    include_base = TRUE
+)
 ```
+
+:::

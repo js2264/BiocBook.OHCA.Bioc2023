@@ -1,12 +1,10 @@
 # Visualizing Hi-C data in R
 
 ```{r}
-#| eval: true
 #| echo: false
 #| results: "hide"
 #| message: false
 #| warning: false
-source("_common.R")
 suppressPackageStartupMessages({
     library(HiContactsData)
     library(HiContacts)
@@ -15,6 +13,7 @@ suppressPackageStartupMessages({
 ```
 
 ::: {.callout-tip collapse="true"}
+
 ## Generating the example `hic` object 👇
 
 To demonstrate how to visualize a `HiCExperiment` contact matrix, we will create 
@@ -39,6 +38,7 @@ hic <- import(cf, focus = 'V', resolution = 2000)
 ```{r}
 hic
 ```
+
 :::
 
 ## Visualizing Hi-C contact maps
@@ -102,10 +102,18 @@ Read the following sections from the OHCA book:
 
 - [HiCExperiment visualization](https://jserizay.com/OHCA/visualization.html)
 
-## Session info 
+# Session info {-}
 
-```{r}
-#| echo: false
-#| eval: true
-sessioninfo::session_info()
+::: {.callout-note collapse="true"}
+
+## Click to expand 👇
+
+```{r "session info"}
+#| cache: false
+sessioninfo::session_info(
+    installed.packages()[,"Package"], 
+    include_base = TRUE
+)
 ```
+
+:::

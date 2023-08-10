@@ -15,6 +15,11 @@ Depends:
     R (>= 4.3), 
     BiocBook
 Imports:
+    HiContacts, 
+    HiContactsData, 
+    HiCool, 
+    HiCExperiment, 
+    GenomicRanges
 Suggests:
     glue,
     rebook,
