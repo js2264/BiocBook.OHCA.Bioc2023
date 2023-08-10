@@ -21,57 +21,47 @@ intro <- glue::glue(
 
 `r intro`
 
-This is the landing page of the `BiocBook` entitled *...*.  
-
-This book introduces the reader to *...*.  
-
-# Docker image {-}
-
-A `Docker` image built from this repository is available here: 
-
-👉 [ghcr.io/js2264/biocbook.ohca.bioc2023](https://ghcr.io/js2264/biocbook.ohca.bioc2023) 🐳
+This `BiocBook` is used to demonstrate the OHCA package at the Bioconductor Conference 2023. 
 
 ::: {.callout-tip icon='true'}
-## Get started now 🎉
-
-You can get access to all the packages used in this book in < 1 minute, 
-using this command in a terminal: 
-
-```{sh "docker", filename="bash"}
-#| eval: false
-docker run -it ghcr.io/js2264/biocbook.ohca.bioc2023:devel R
-```
-
+## 📚 The OHCA book is the main documentation, and is available [here](https://jserizay.com/OHCA/). {.unnumbered .unlisted}
 :::
 
-# RStudio Server {-}
+## Description
 
-An RStudio Server instance can be initiated from the `Docker` image as follows: 
+This demonstration focuses on the `OHCA` ecosystem, including the 
+following packages : 
 
-```{sh "rstudio", filename="bash"}
-#| eval: false
-docker run \
-    --volume <local_folder>:<destination_folder> \
-    -e PASSWORD=OHCA \
-    -p 8787:8787 \
-    ghcr.io/js2264/biocbook.ohca.bioc2023:devel
+- `HiCool`
+- `HiCExperiment`
+- `HiContacts`
+- `fourDNData`
+
+## Pre-requisites
+
+* Familiarity with the `tidyverse` syntax; 
+* Familiarity with the `GenomicRanges` class; 
+* Basic understanding of Hi-C principles
+
+For more information on Hi-C experimental approach and principles, 
+read [OHCA book first chapter](https://jserizay.com/OHCA/principles.html).
+
+## Time outline
+
+| Activity                     | Time |
+|------------------------------|------|
+| Introduction to Hi-C         | 10m  |
+| OHCA ecosystem               | 10m  |
+| Demonstration with real data | 20m  |
+| Wrapping up                  | 5m   |
+
+## Docker image
+
+To quickly use the `BiocBook` Docker image:
+
+```sh
+docker run -it -e PASSWORD=OHCA -p 8787:8787 ghcr.io/js2264/BiocBook.OHCA.Bioc2023:RELEASE_3_17
 ```
 
-The initiated RStudio Server instance will be available at 
-[https://localhost:8787](https://localhost:8787).
-
-# Session info {-}
-
-::: {.callout-note collapse="true"}
-
-## Click to expand 👇
-
-```{r "session info"}
-#| cache: false
-sessioninfo::session_info(
-    installed.packages()[,"Package"], 
-    include_base = TRUE
-)
-```
-
-:::
+Once running, navigate to http://localhost:8787/ and then login 
+with `rstudio`:`OHCA`. 

@@ -2,6 +2,11 @@ book:
   title: "BiocBook.OHCA.Bioc2023"
   chapters:
     - index.qmd
+    - pages/slides.qmd
+    - pages/parsing.qmd
+    - pages/visualizing.qmd
+    - pages/investigating.qmd
+    - pages/interoperability.qmd
   cover-image: inst/assets/cover.png
   favicon: inst/assets/favicon.png
   sidebar: 
