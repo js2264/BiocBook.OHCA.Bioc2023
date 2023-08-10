@@ -19,7 +19,8 @@ Imports:
     HiContactsData, 
     HiCool, 
     HiCExperiment, 
-    GenomicRanges
+    GenomicRanges,
+    cowplot
 Suggests:
     glue,
     rebook,
