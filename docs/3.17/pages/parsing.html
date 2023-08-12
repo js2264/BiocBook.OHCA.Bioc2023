@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Hi-C analysis with BioconductorPackage DemoBioc2023 Conference - 2&nbsp; Parsing Hi-C data in R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../pages/visualizing.html" rel="next">
+<link href="../pages/slides.html" rel="prev">
+<link href="../inst/assets/favicon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+</head>
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/parsing.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Parsing Hi-C data in R</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Hi-C analysis with Bioconductor<br>Package Demo<br>Bioc2023 Conference</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-git"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/js2264/BiocBook.OHCA.Bioc2023/">
+            Source Code
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://js2264.github.io/BiocBook.OHCA.Bioc2023/3.17/">
+            Browse version `3.17`
+            </a>
+          </li>
+      </ul>
+</div>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/slides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Package presentation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/parsing.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Parsing Hi-C data in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/visualizing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Visualizing Hi-C data in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/investigating.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Investigating Hi-C data in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/interoperability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Interoperability of HiCExperiment</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li>
+<a href="#processing-hi-c-paired-end-reads-in-r" id="toc-processing-hi-c-paired-end-reads-in-r" class="nav-link active" data-scroll-target="#processing-hi-c-paired-end-reads-in-r"><span class="header-section-number">2.1</span> Processing Hi-C paired-end reads in R</a>
+  <ul class="collapse">
+<li><a href="#runninng-hicool" id="toc-runninng-hicool" class="nav-link" data-scroll-target="#runninng-hicool"><span class="header-section-number">2.1.1</span> Runninng <code>HiCool</code></a></li>
+  <li><a href="#hicool-outputs" id="toc-hicool-outputs" class="nav-link" data-scroll-target="#hicool-outputs"><span class="header-section-number">2.1.2</span> <code>HiCool</code> outputs</a></li>
+  <li><a href="#coolfile" id="toc-coolfile" class="nav-link" data-scroll-target="#coolfile"><span class="header-section-number">2.1.3</span> <code>CoolFile</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#importing-hi-c-contact-maps-in-r" id="toc-importing-hi-c-contact-maps-in-r" class="nav-link" data-scroll-target="#importing-hi-c-contact-maps-in-r"><span class="header-section-number">2.2</span> Importing Hi-C contact maps in R</a>
+  <ul class="collapse">
+<li><a href="#importing-and-subsetting" id="toc-importing-and-subsetting" class="nav-link" data-scroll-target="#importing-and-subsetting"><span class="header-section-number">2.2.1</span> Importing and subsetting</a></li>
+  <li><a href="#slots" id="toc-slots" class="nav-link" data-scroll-target="#slots"><span class="header-section-number">2.2.2</span> Slots</a></li>
+  </ul>
+</li>
+  <li><a href="#read-more" id="toc-read-more" class="nav-link" data-scroll-target="#read-more"><span class="header-section-number">2.3</span> Read more</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">
+<span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Parsing Hi-C data in R</span>
+</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header><section id="processing-hi-c-paired-end-reads-in-r" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="processing-hi-c-paired-end-reads-in-r">
+<span class="header-section-number">2.1</span> Processing Hi-C paired-end reads in R</h2>
+<section id="runninng-hicool" class="level3" data-number="2.1.1"><h3 data-number="2.1.1" class="anchored" data-anchor-id="runninng-hicool">
+<span class="header-section-number">2.1.1</span> Runninng <code>HiCool</code>
+</h3>
+<p>A pair of <code>fastq</code> files can be parsed into <code>.pairs</code> and <code>.(m)cool</code> files with <code>HiCool</code>, thanks to the self-managed <code>basilisk</code> environment.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/js2264/HiCool">HiCool</a></span><span class="op">)</span></span>
+<span><span class="fu">HiCool</span><span class="fu">:::</span><span class="va">env_HiCool</span></span>
+<span><span class="co">##  An object of class "BasiliskEnvironment"</span></span>
+<span><span class="co">##  Slot "envname":</span></span>
+<span><span class="co">##  [1] "env"</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Slot "pkgname":</span></span>
+<span><span class="co">##  [1] "HiCool"</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Slot "packages":</span></span>
+<span><span class="co">##  [1] "python==3.7.12"     "bowtie2==2.5.0"     "samtools==1.16.1"  </span></span>
+<span><span class="co">##  [4] "hicstuff==3.1.5"    "chromosight==1.6.3" "cooler==0.9.1"     </span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Slot "channels":</span></span>
+<span><span class="co">##  [1] "conda-forge" "bioconda"   </span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Slot "pip":</span></span>
+<span><span class="co">##  character(0)</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Slot "paths":</span></span>
+<span><span class="co">##  character(0)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<code>HiCool</code> vs.&nbsp;<code>hicstuff</code> 👇
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>HiCool</code> mostly operates as a wrapper to the lightweight python-based <a href="https://hicstuff.readthedocs.io/en/latest/"><code>hicstuff</code> library</a>. What <code>HiCool</code> really does is running <code>hicstuff pipeline</code>. You can replicate this outside of <code>R</code> console, directly in the terminal, by running:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>sh</strong></pre>
+</div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">hicstuff</span> pipeline <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   <span class="op">&lt;</span>hicstuff-options<span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">--genome</span> <span class="op">&lt;</span>genome.fa<span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>   <span class="op">&lt;</span>input.R1.fq.gz<span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>   <span class="op">&lt;</span>input.R2.fq.gz<span class="op">&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">################################################################################</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">##                     hicstuff important options                             ##</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">################################################################################</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">hicstuff</span> pipeline <span class="at">--help</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">##        -D | --duplicates         Filter out PCR duplicates based on read</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  positions.</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">##        -e | --enzyme={STR|INT}   Restriction enzyme or "mnase" if a string,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  or chunk size (i.e. resolution) if a number.</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  Can also be multiple comma-separated</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  enzymes. [default: 5000]</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">##        -f | --filter             Filter out spurious 3C events (loops and</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  uncuts) using hicstuff filter. Requires</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  "-e" to be a restriction enzyme or mnase,</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  not a chunk size. For more informations, see</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  Cournac et al. BMC Genomics, 2012.</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">##        -m | --mapping=STR        normal|iterative|cutsite. Parameter of</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  mapping. "normal": Directly map reads</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  without any process. "iterative": Map</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  reads iteratively using iteralign, by</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  truncating reads to 20bp and then</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  repeatedly extending to align them.</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  "cutsite": Cut reads at the religation</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  sites of the given enzyme using cutsite,</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  create new pairs of reads and then align</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  them ; enzyme is required [default: normal].</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">##        -M | --matfmt=STR         The format of the output sparse matrix.</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  Can be "bg2" for 2D Bedgraph format,</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  "cool" for Mirnylab's cooler software, or</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  "graal" for graal-compatible plain text</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  COO format. [default: graal]</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co">##        -n | --no-cleanup         If enabled, intermediary BED files will</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  be kept after generating the contact map.</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  Disabled by defaut.</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">##        -o | --outdir=DIR         Output directory. Defaults to the current</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  directory.</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">##        -p | --plot               Generates plots in the output directory</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  at different steps of the pipeline.</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">##        -t | --threads=INT        Number of threads to allocate.</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co">##                                  [default: 1].</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>A call to <code><a href="https://rdrr.io/pkg/HiCool/man/HiCool.html">HiCool()</a></code> triggers <code>hicstuff</code> pipeline to process <code>fastq</code> files into <code>.pairs</code> and <code>.(m)cool</code> files, and returns a <code>CoolFile</code> object in <code>R</code>, along with HTML reports.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/js2264/HiContactsData">HiContactsData</a></span><span class="op">)</span></span>
+<span><span class="va">r1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/HiContactsData/man/HiContactsData.html">HiContactsData</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">'yeast_wt'</span>, format <span class="op">=</span> <span class="st">'fastq_R1'</span><span class="op">)</span></span>
+<span><span class="co">##  see ?HiContactsData and browseVignettes('HiContactsData') for documentation</span></span>
+<span><span class="co">##  downloading 1 resources</span></span>
+<span><span class="co">##  retrieving 1 resource</span></span>
+<span><span class="co">##  loading from cache</span></span>
+<span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/HiContactsData/man/HiContactsData.html">HiContactsData</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">'yeast_wt'</span>, format <span class="op">=</span> <span class="st">'fastq_R2'</span><span class="op">)</span></span>
+<span><span class="co">##  see ?HiContactsData and browseVignettes('HiContactsData') for documentation</span></span>
+<span><span class="co">##  downloading 1 resources</span></span>
+<span><span class="co">##  retrieving 1 resource</span></span>
+<span><span class="co">##  loading from cache</span></span>
+<span><span class="va">hcf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/HiCool/man/HiCool.html">HiCool</a></span><span class="op">(</span></span>
+<span>    <span class="va">r1</span>, <span class="va">r2</span>, </span>
+<span>    restriction <span class="op">=</span> <span class="st">'DpnII,HinfI'</span>, </span>
+<span>    genome <span class="op">=</span> <span class="st">'R64-1-1'</span>, </span>
+<span>    output <span class="op">=</span> <span class="st">'./HiCool/'</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">##  HiCool :: Fetching bowtie genome index files from AWS iGenomes S3 bucket...</span></span>
+<span><span class="co">##  HiCool :: Recovering bowtie2 genome index from AWS iGenomes...</span></span>
+<span><span class="co">##  + /github/home/.cache/R/basilisk/1.12.1/0/bin/conda 'create' '--yes' '--prefix' '/github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env' 'python=3.7.12' '--quiet' '-c' 'conda-forge' '-c' 'bioconda'</span></span>
+<span><span class="co">##  + /github/home/.cache/R/basilisk/1.12.1/0/bin/conda 'install' '--yes' '--prefix' '/github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env' 'python=3.7.12'</span></span>
+<span><span class="co">##  + /github/home/.cache/R/basilisk/1.12.1/0/bin/conda 'install' '--yes' '--prefix' '/github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env' '-c' 'conda-forge' '-c' 'bioconda' 'python=3.7.12' 'python=3.7.12' 'bowtie2=2.5.0' 'samtools=1.16.1' 'hicstuff=3.1.5' 'chromosight=1.6.3' 'cooler=0.9.1'</span></span>
+<span><span class="co">##  HiCool :: Initiating processing of fastq files [tmp folder: /tmp/Rtmp4nscOU/WL4DIE]...</span></span>
+<span><span class="co">##  HiCool :: Mapping fastq files...</span></span>
+<span><span class="co">##  HiCool :: Best-suited minimum resolution automatically inferred: 1000</span></span>
+<span><span class="co">##  HiCool :: Removing unwanted chromosomes...</span></span>
+<span><span class="co">##  HiCool :: Parsing pairs into .cool file...</span></span>
+<span><span class="co">##  HiCool :: Generating multi-resolution .mcool file...</span></span>
+<span><span class="co">##  HiCool :: Balancing .mcool file...</span></span>
+<span><span class="co">##  Iteration limit reached without convergence</span></span>
+<span><span class="co">##  Storing final result. Check log to assess convergence.</span></span>
+<span><span class="co">##  HiCool :: Tidying up everything for you...</span></span>
+<span><span class="co">##  HiCool :: .fastq to .mcool processing done!</span></span>
+<span><span class="co">##  HiCool :: Check ./HiCool/folder to find the generated files</span></span>
+<span><span class="co">##  HiCool :: Generating HiCool report. This might take a while.</span></span>
+<span><span class="co">##  HiCool :: Report generated and available @ /__w/BiocBook.OHCA.Bioc2023/BiocBook.OHCA.Bioc2023/pages/HiCool/2da846db99_7833^mapped-R64-1-1^WL4DIE.html</span></span>
+<span><span class="co">##  HiCool :: All processing successfully achieved. Congrats!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section><section id="hicool-outputs" class="level3" data-number="2.1.2"><h3 data-number="2.1.2" class="anchored" data-anchor-id="hicool-outputs">
+<span class="header-section-number">2.1.2</span> <code>HiCool</code> outputs</h3>
+<p>You can check the generated output files placed in the <code>HiCool/</code> directory.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hcf</span></span>
+<span><span class="co">##  CoolFile object</span></span>
+<span><span class="co">##  .mcool file: ./HiCool//matrices/2da846db99_7833^mapped-R64-1-1^WL4DIE.mcool </span></span>
+<span><span class="co">##  resolution: 1000 </span></span>
+<span><span class="co">##  pairs file: ./HiCool//pairs/2da846db99_7833^mapped-R64-1-1^WL4DIE.pairs </span></span>
+<span><span class="co">##  metadata(3): log args stats</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>The <code>*.pairs</code> and <code>*.mcool</code> files are the pairs and contact matrix files, respectively. <strong>These are the output files the end-user is generally looking for.</strong>
+</li>
+<li>The <code>*.html</code> file is a report summarizing pairs numbers, filtering, etc…</li>
+<li>The <code>*.log</code> file contains all output and error messages, as well as the full list of commands that have been executed to pre-process the input dataset.</li>
+<li>The <code>*.pdf</code> graphic files provide a visual representation of the distribution of informative/non-informative pairs.</li>
+</ul></section><section id="coolfile" class="level3" data-number="2.1.3"><h3 data-number="2.1.3" class="anchored" data-anchor-id="coolfile">
+<span class="header-section-number">2.1.3</span> <code>CoolFile</code>
+</h3>
+<p>A pointer to a local <code>.(m)cool</code> file (or <code>.hic</code>, HiC-Pro-style or <code>.pairs</code> file) can also be manually created:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/js2264/HiCExperiment">HiCExperiment</a></span><span class="op">)</span></span>
+<span><span class="va">mcool</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/HiContactsData/man/HiContactsData.html">HiContactsData</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">'yeast_wt'</span>, format <span class="op">=</span> <span class="st">'mcool'</span><span class="op">)</span></span>
+<span><span class="co">##  see ?HiContactsData and browseVignettes('HiContactsData') for documentation</span></span>
+<span><span class="co">##  downloading 1 resources</span></span>
+<span><span class="co">##  retrieving 1 resource</span></span>
+<span><span class="co">##  loading from cache</span></span>
+<span><span class="va">mcool</span></span>
+<span><span class="co">##                                                  EH7702 </span></span>
+<span><span class="co">##  "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">availableResolutions</a></span><span class="op">(</span><span class="va">mcool</span><span class="op">)</span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">availableChromosomes</a></span><span class="op">(</span><span class="va">mcool</span><span class="op">)</span></span>
+<span><span class="co">##  Seqinfo object with 16 sequences from an unspecified genome:</span></span>
+<span><span class="co">##    seqnames seqlengths isCircular genome</span></span>
+<span><span class="co">##    I            230218       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    II           813184       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    III          316620       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    IV          1531933       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    V            576874       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    ...             ...        ...    ...</span></span>
+<span><span class="co">##    XII         1078177       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XIII         924431       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XIV          784333       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XV          1091291       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XVI          948066       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="va">cf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/CoolFile-class.html">CoolFile</a></span><span class="op">(</span><span class="va">mcool</span><span class="op">)</span></span>
+<span><span class="va">cf</span></span>
+<span><span class="co">##  CoolFile object</span></span>
+<span><span class="co">##  .mcool file: /github/home/.cache/R/ExperimentHub/2da5f574e2b_7752 </span></span>
+<span><span class="co">##  resolution: 1000 </span></span>
+<span><span class="co">##  pairs file: </span></span>
+<span><span class="co">##  metadata(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section></section><section id="importing-hi-c-contact-maps-in-r" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="importing-hi-c-contact-maps-in-r">
+<span class="header-section-number">2.2</span> Importing Hi-C contact maps in R</h2>
+<section id="importing-and-subsetting" class="level3" data-number="2.2.1"><h3 data-number="2.2.1" class="anchored" data-anchor-id="importing-and-subsetting">
+<span class="header-section-number">2.2.1</span> Importing and subsetting</h3>
+<p>A full contact map can be imported in <code>R</code> with <code>import</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 8,757,906 contacts over 12,079 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "whole genome" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 2945692 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>A specific resollution can be specified with the <code>resolution</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span>, resolution <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 8,757,906 contacts over 6,045 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "whole genome" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 2000 </span></span>
+<span><span class="co">##  interactions: 2198094 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>A subset of the contact map can be imported in <code>R</code> by specifying a <code>focus</code> as a string:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span>, focus <span class="op">=</span> <span class="st">'I'</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 93,163 contacts over 231 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "I" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 11535 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span>, focus <span class="op">=</span> <span class="st">'I:1-40000'</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 9,803 contacts over 40 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "I:1-40,000" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 703 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span>, focus <span class="op">=</span> <span class="st">'I|II'</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 6,626 contacts over 1,045 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "I|II" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 6008 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span>, focus <span class="op">=</span> <span class="st">'I:1-40000|II:2001-40000'</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 68 contacts over 78 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "I:1-40000|II:2001-40000" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 62 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>Subsetting can also be performed once the matrix has been loaded in memory:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges">GenomicRanges</a></span><span class="op">)</span></span>
+<span><span class="va">hic</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocIO/man/IO.html">import</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span></span>
+<span><span class="va">hic</span></span>
+<span><span class="co">##  `HiCExperiment` object with 8,757,906 contacts over 12,079 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "whole genome" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 2945692 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span>
+<span><span class="va">hic</span><span class="op">[</span><span class="st">"I:1-40000"</span><span class="op">]</span></span>
+<span><span class="co">##  `HiCExperiment` object with 9,803 contacts over 40 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "I:1-40,000" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 703 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span>
+<span><span class="co">## or ...</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html">subsetByOverlaps</a></span><span class="op">(</span><span class="va">hic</span>, <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html">GRanges</a></span><span class="op">(</span><span class="st">"I:1-40000"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">##  `HiCExperiment` object with 9,803 contacts over 40 regions </span></span>
+<span><span class="co">##  -------</span></span>
+<span><span class="co">##  fileName: "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752" </span></span>
+<span><span class="co">##  focus: "I:1-40,000" </span></span>
+<span><span class="co">##  resolutions(5): 1000 2000 4000 8000 16000</span></span>
+<span><span class="co">##  active resolution: 1000 </span></span>
+<span><span class="co">##  interactions: 703 </span></span>
+<span><span class="co">##  scores(2): count balanced </span></span>
+<span><span class="co">##  topologicalFeatures: compartments(0) borders(0) loops(0) viewpoints(0) </span></span>
+<span><span class="co">##  pairsFile: N/A </span></span>
+<span><span class="co">##  metadata(0):</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section><section id="slots" class="level3" data-number="2.2.2"><h3 data-number="2.2.2" class="anchored" data-anchor-id="slots">
+<span class="header-section-number">2.2.2</span> Slots</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>R</strong></pre>
+</div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/methods/RClassUtils.html">showClass</a></span><span class="op">(</span><span class="st">"HiCExperiment"</span><span class="op">)</span></span>
+<span><span class="co">##  Class "HiCExperiment" [package "HiCExperiment"]</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Slots:</span></span>
+<span><span class="co">##                                                                    </span></span>
+<span><span class="co">##  Name:             fileName               focus         resolutions</span></span>
+<span><span class="co">##  Class:           character     characterOrNULL             numeric</span></span>
+<span><span class="co">##                                                                    </span></span>
+<span><span class="co">##  Name:           resolution        interactions              scores</span></span>
+<span><span class="co">##  Class:             numeric       GInteractions          SimpleList</span></span>
+<span><span class="co">##                                                                    </span></span>
+<span><span class="co">##  Name:  topologicalFeatures           pairsFile            metadata</span></span>
+<span><span class="co">##  Class:          SimpleList     characterOrNULL                list</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Extends: "Annotated"</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  Known Subclasses: "AggrHiCExperiment"</span></span>
+<span></span>
+<span><span class="co">## -- Extract informations</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/fileName.html">fileName</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span> </span>
+<span><span class="co">##  [1] "/github/home/.cache/R/ExperimentHub/2da5f574e2b_7752"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">resolutions</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span> </span>
+<span><span class="co">##  [1]  1000  2000  4000  8000 16000</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">resolution</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span> </span>
+<span><span class="co">##  [1] 1000</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html">seqinfo</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span> </span>
+<span><span class="co">##  Seqinfo object with 16 sequences from an unspecified genome:</span></span>
+<span><span class="co">##    seqnames seqlengths isCircular genome</span></span>
+<span><span class="co">##    I            230218       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    II           813184       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    III          316620       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    IV          1531933       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    V            576874       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    ...             ...        ...    ...</span></span>
+<span><span class="co">##    XII         1078177       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XIII         924431       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XIV          784333       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XV          1091291       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="co">##    XVI          948066       &lt;NA&gt;   &lt;NA&gt;</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html">metadata</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span></span>
+<span><span class="co">##  list()</span></span>
+<span></span>
+<span><span class="co">## -- Extract data</span></span>
+<span><span class="fu">interactions</span><span class="op">(</span><span class="va">hic</span><span class="op">)</span></span>
+<span><span class="co">##  GInteractions object with 2945692 interactions and 4 metadata columns:</span></span>
+<span><span class="co">##              seqnames1       ranges1     seqnames2       ranges2 |   bin_id1</span></span>
+<span><span class="co">##                  &lt;Rle&gt;     &lt;IRanges&gt;         &lt;Rle&gt;     &lt;IRanges&gt; | &lt;numeric&gt;</span></span>
+<span><span class="co">##          [1]         I        1-1000 ---         I        1-1000 |         0</span></span>
+<span><span class="co">##          [2]         I        1-1000 ---         I     1001-2000 |         0</span></span>
+<span><span class="co">##          [3]         I        1-1000 ---         I     2001-3000 |         0</span></span>
+<span><span class="co">##          [4]         I        1-1000 ---         I     3001-4000 |         0</span></span>
+<span><span class="co">##          [5]         I        1-1000 ---         I     4001-5000 |         0</span></span>
+<span><span class="co">##          ...       ...           ... ...       ...           ... .       ...</span></span>
+<span><span class="co">##    [2945688]       XVI 940001-941000 ---       XVI 942001-943000 |     12070</span></span>
+<span><span class="co">##    [2945689]       XVI 940001-941000 ---       XVI 943001-944000 |     12070</span></span>
+<span><span class="co">##    [2945690]       XVI 941001-942000 ---       XVI 941001-942000 |     12071</span></span>
+<span><span class="co">##    [2945691]       XVI 941001-942000 ---       XVI 942001-943000 |     12071</span></span>
+<span><span class="co">##    [2945692]       XVI 941001-942000 ---       XVI 943001-944000 |     12071</span></span>
+<span><span class="co">##                bin_id2     count  balanced</span></span>
+<span><span class="co">##              &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">##          [1]         0        15 0.0663491</span></span>
+<span><span class="co">##          [2]         1        21 0.1273505</span></span>
+<span><span class="co">##          [3]         2        21 0.0738691</span></span>
+<span><span class="co">##          [4]         3        38 0.0827051</span></span>
+<span><span class="co">##          [5]         4        17 0.0591984</span></span>
+<span><span class="co">##          ...       ...       ...       ...</span></span>
+<span><span class="co">##    [2945688]     12072        11 0.0575550</span></span>
+<span><span class="co">##    [2945689]     12073         1       NaN</span></span>
+<span><span class="co">##    [2945690]     12071        74 0.0504615</span></span>
+<span><span class="co">##    [2945691]     12072        39 0.1624599</span></span>
+<span><span class="co">##    [2945692]     12073         1       NaN</span></span>
+<span><span class="co">##    -------</span></span>
+<span><span class="co">##    regions: 12079 ranges and 4 metadata columns</span></span>
+<span><span class="co">##    seqinfo: 16 sequences from an unspecified genome</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">scores</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span></span>
+<span><span class="co">##  List of length 2</span></span>
+<span><span class="co">##  names(2): count balanced</span></span>
+<span></span>
+<span><span class="co">## -- Extract extra data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">topologicalFeatures</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span></span>
+<span><span class="co">##  List of length 4</span></span>
+<span><span class="co">##  names(4): compartments borders loops viewpoints</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/HiCExperiment/man/AllGenerics.html">pairsFile</a></span><span class="op">(</span><span class="va">hic</span><span class="op">)</span></span>
+<span><span class="co">##  NULL</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section></section><section id="read-more" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="read-more">
+<span class="header-section-number">2.3</span> Read more</h2>
+<p>Read the following sections from the OHCA book:</p>
+<ul>
+<li><a href="https://jserizay.com/OHCA/data-representation.html#hicexperiment-class">HiCExperiment class presentation</a></li>
+<li><a href="https://jserizay.com/OHCA/parsing.html">HiCExperiment class manipulation</a></li>
+</ul></section><section id="session-info" class="level1 unnumbered"><h1 class="unnumbered">Session info</h1>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click to expand 👇
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html">session_info</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>,<span class="st">"Package"</span><span class="op">]</span>, </span>
+<span>    include_base <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">##  ─ Session info ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">##   setting  value</span></span>
+<span><span class="co">##   version  R version 4.3.0 (2023-04-21)</span></span>
+<span><span class="co">##   os       Ubuntu 22.04.2 LTS</span></span>
+<span><span class="co">##   system   x86_64, linux-gnu</span></span>
+<span><span class="co">##   ui       X11</span></span>
+<span><span class="co">##   language (EN)</span></span>
+<span><span class="co">##   collate  en_US.UTF-8</span></span>
+<span><span class="co">##   ctype    en_US.UTF-8</span></span>
+<span><span class="co">##   tz       Etc/UTC</span></span>
+<span><span class="co">##   date     2023-08-12</span></span>
+<span><span class="co">##   pandoc   2.19.2 @ /usr/local/bin/ (via rmarkdown)</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  ─ Packages ────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">##   ! package                           * version    date (UTC) lib source</span></span>
+<span><span class="co">##     abind                               1.4-5      2016-07-21 [1] RSPM</span></span>
+<span><span class="co">##     aggregation                         1.0.1      2018-01-25 [1] RSPM</span></span>
+<span><span class="co">##     AnnotationDbi                       1.62.2     2023-07-02 [1] Bioconductor</span></span>
+<span><span class="co">##     AnnotationFilter                    1.24.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     AnnotationHub                     * 3.8.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     askpass                             1.1        2019-01-13 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     available                           1.1.0      2022-07-10 [1] RSPM</span></span>
+<span><span class="co">##     backports                           1.4.1      2021-12-13 [1] RSPM</span></span>
+<span><span class="co">##     base                              * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     base64enc                           0.1-3      2015-07-28 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     basilisk                            1.12.1     2023-06-30 [1] Bioconductor</span></span>
+<span><span class="co">##     basilisk.utils                      1.12.1     2023-05-19 [1] Bioconductor</span></span>
+<span><span class="co">##     beeswarm                            0.4.0      2021-06-01 [1] RSPM</span></span>
+<span><span class="co">##     BH                                  1.81.0-1   2023-01-22 [1] RSPM</span></span>
+<span><span class="co">##     Biobase                             2.60.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     BiocBook                            0.99.0     2023-08-12 [1] Github (js2264/BiocBook@1ef3442)</span></span>
+<span><span class="co">##     BiocBook.OHCA.Bioc2023              0.99.0     2023-08-12 [1] local</span></span>
+<span><span class="co">##     BiocFileCache                     * 2.8.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     BiocGenerics                      * 0.46.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     BiocIO                              1.10.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     BiocManager                         1.30.20    2023-02-24 [1] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     BiocParallel                        1.34.2     2023-05-22 [1] Bioconductor</span></span>
+<span><span class="co">##     BiocStyle                           2.28.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     BiocVersion                         3.17.1     2022-11-04 [1] Bioconductor</span></span>
+<span><span class="co">##     biomaRt                             2.56.1     2023-06-09 [1] Bioconductor</span></span>
+<span><span class="co">##     Biostrings                          2.68.1     2023-05-16 [1] Bioconductor</span></span>
+<span><span class="co">##     biovizBase                          1.48.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     bit                                 4.0.5      2022-11-15 [1] RSPM</span></span>
+<span><span class="co">##     bit64                               4.0.5      2020-08-30 [1] RSPM</span></span>
+<span><span class="co">##     bitops                              1.0-7      2021-04-24 [1] RSPM</span></span>
+<span><span class="co">##     blob                                1.2.4      2023-03-17 [1] RSPM</span></span>
+<span><span class="co">##     bookdown                            0.35       2023-08-09 [1] RSPM</span></span>
+<span><span class="co">##     boot                                1.3-28.1   2022-11-22 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     brew                                1.0-8      2022-09-29 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     brio                                1.1.3      2021-11-30 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     BSgenome                            1.68.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     BSgenome.Hsapiens.UCSC.hg38         1.4.5      2023-08-12 [1] Bioconductor</span></span>
+<span><span class="co">##     BSgenome.Scerevisiae.UCSC.sacCer3   1.4.0      2023-08-12 [1] Bioconductor</span></span>
+<span><span class="co">##     bslib                               0.4.2      2022-12-16 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     cachem                              1.0.7      2023-02-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     Cairo                               1.6-0      2022-07-05 [1] RSPM</span></span>
+<span><span class="co">##     calibrate                           1.7.7      2020-06-19 [1] RSPM</span></span>
+<span><span class="co">##     callr                               3.7.3      2022-11-02 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     checkmate                           2.2.0      2023-04-27 [1] RSPM</span></span>
+<span><span class="co">##     class                               7.3-21     2023-01-23 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     cli                                 3.6.1      2023-03-23 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     clipr                               0.8.0      2022-02-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     clisymbols                          1.2.0      2017-05-21 [1] RSPM</span></span>
+<span><span class="co">##     cluster                             2.1.4      2022-08-22 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     CodeDepends                         0.6.5      2018-07-17 [1] RSPM</span></span>
+<span><span class="co">##     codetools                           0.2-19     2023-02-01 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     colorspace                          2.1-0      2023-01-23 [1] RSPM</span></span>
+<span><span class="co">##     commonmark                          1.9.0      2023-03-17 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     compiler                            4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     cowplot                             1.1.1      2020-12-30 [1] RSPM</span></span>
+<span><span class="co">##     cpp11                               0.4.3      2022-10-12 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     crayon                              1.5.2      2022-09-29 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     credentials                         1.3.2      2021-11-29 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     crosstalk                           1.2.0      2021-11-04 [1] RSPM</span></span>
+<span><span class="co">##     curl                                5.0.0      2023-01-12 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     data.table                          1.14.8     2023-02-17 [1] RSPM</span></span>
+<span><span class="co">##     datasets                          * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     DBI                                 1.1.3      2022-06-18 [1] RSPM</span></span>
+<span><span class="co">##     dbplyr                            * 2.3.3      2023-07-07 [1] RSPM</span></span>
+<span><span class="co">##     DelayedArray                        0.26.7     2023-07-28 [1] Bioconductor</span></span>
+<span><span class="co">##     deldir                              1.0-9      2023-05-17 [1] RSPM</span></span>
+<span><span class="co">##     desc                                1.4.2      2022-09-08 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     devtools                            2.4.5      2022-10-11 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     dichromat                           2.0-0.1    2022-05-02 [1] RSPM</span></span>
+<span><span class="co">##     diffobj                             0.3.5      2021-10-05 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     digest                              0.6.31     2022-12-11 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     dir.expiry                          1.8.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     docopt                              0.7.1      2020-06-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     doParallel                          1.0.17     2022-02-07 [1] RSPM</span></span>
+<span><span class="co">##     downlit                             0.4.2      2022-07-05 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     dplyr                               1.1.2      2023-04-20 [1] RSPM</span></span>
+<span><span class="co">##     DT                                  0.28       2023-05-18 [1] RSPM</span></span>
+<span><span class="co">##     dynamicTreeCut                      1.63-1     2016-03-11 [1] RSPM</span></span>
+<span><span class="co">##     edgeR                               3.42.4     2023-05-31 [1] Bioconductor</span></span>
+<span><span class="co">##     ellipsis                            0.3.2      2021-04-29 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     ensembldb                           2.24.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     evaluate                            0.20       2023-01-17 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     ExperimentHub                     * 2.8.1      2023-07-12 [1] Bioconductor</span></span>
+<span><span class="co">##     fansi                               1.0.4      2023-01-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     farver                              2.1.1      2022-07-06 [1] RSPM</span></span>
+<span><span class="co">##     fastcluster                         1.2.3      2021-05-24 [1] RSPM</span></span>
+<span><span class="co">##     fastmap                             1.1.1      2023-02-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     filelock                            1.0.2      2018-10-05 [1] RSPM</span></span>
+<span><span class="co">##     fontawesome                         0.5.1      2023-04-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     forcats                             1.0.0      2023-01-29 [1] RSPM</span></span>
+<span><span class="co">##     foreach                             1.5.2      2022-02-02 [1] RSPM</span></span>
+<span><span class="co">##     foreign                             0.8-84     2022-12-06 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     formatR                             1.14       2023-01-17 [1] RSPM</span></span>
+<span><span class="co">##     Formula                             1.2-5      2023-02-24 [1] RSPM</span></span>
+<span><span class="co">##     fs                                  1.6.2      2023-04-25 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     futile.logger                       1.4.3      2016-07-10 [1] RSPM</span></span>
+<span><span class="co">##     futile.options                      1.0.1      2018-04-20 [1] RSPM</span></span>
+<span><span class="co">##     generics                            0.1.3      2022-07-05 [1] RSPM</span></span>
+<span><span class="co">##     GenomeInfoDb                      * 1.36.1     2023-06-21 [1] Bioconductor</span></span>
+<span><span class="co">##     GenomeInfoDbData                    1.2.10     2023-08-12 [1] Bioconductor</span></span>
+<span><span class="co">##     GenomicAlignments                   1.36.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     GenomicFeatures                     1.52.1     2023-06-22 [1] Bioconductor</span></span>
+<span><span class="co">##     GenomicRanges                     * 1.52.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     gert                                1.9.2      2022-12-05 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     GGally                              2.1.2      2021-06-21 [1] RSPM</span></span>
+<span><span class="co">##     ggbeeswarm                          0.7.2      2023-04-29 [1] RSPM</span></span>
+<span><span class="co">##     ggbio                               1.48.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     ggplot2                             3.4.2      2023-04-03 [1] RSPM</span></span>
+<span><span class="co">##     ggrastr                             1.0.2      2023-06-01 [1] RSPM</span></span>
+<span><span class="co">##     gh                                  1.4.0      2023-02-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     gitcreds                            0.1.2      2022-09-08 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     glue                                1.6.2      2022-02-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     GO.db                               3.17.0     2023-08-12 [1] Bioconductor</span></span>
+<span><span class="co">##     GOTHiC                              1.36.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     graph                               1.78.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     graphics                          * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     grDevices                         * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     grid                                4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     gridExtra                           2.3        2017-09-09 [1] RSPM</span></span>
+<span><span class="co">##     gtable                              0.3.3      2023-03-21 [1] RSPM</span></span>
+<span><span class="co">##     gtools                              3.9.4      2022-11-27 [1] RSPM</span></span>
+<span><span class="co">##     here                                1.0.1      2020-12-13 [1] RSPM</span></span>
+<span><span class="co">##     HiCcompare                          1.22.1     2023-06-04 [1] Bioconductor</span></span>
+<span><span class="co">##     HiCExperiment                     * 1.0.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     HiContacts                          1.2.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     HiContactsData                    * 1.2.0      2023-04-27 [1] Bioconductor</span></span>
+<span><span class="co">##     HiCool                            * 1.0.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     hicrep                              1.12.2     2023-08-12 [1] Github (TaoYang-dev/hicrep@e485dfa)</span></span>
+<span><span class="co">##     highr                               0.10       2022-12-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     Hmisc                               5.1-0      2023-05-08 [1] RSPM</span></span>
+<span><span class="co">##     hms                                 1.1.3      2023-03-21 [1] RSPM</span></span>
+<span><span class="co">##     htmlTable                           2.4.1      2022-07-07 [1] RSPM</span></span>
+<span><span class="co">##     htmltools                           0.5.5      2023-03-23 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     htmlwidgets                         1.6.2      2023-03-17 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     httpuv                              1.6.9      2023-02-14 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     httr                                1.4.5      2023-02-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     httr2                               0.2.2      2022-09-25 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     hwriter                             1.3.2.1    2022-04-08 [1] RSPM</span></span>
+<span><span class="co">##     impute                              1.74.1     2023-05-02 [1] Bioconductor</span></span>
+<span><span class="co">##     ini                                 0.3.1      2018-05-20 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     InteractionSet                      1.28.1     2023-06-14 [1] Bioconductor</span></span>
+<span><span class="co">##     interactiveDisplayBase              1.38.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     interp                              1.1-4      2023-03-31 [1] RSPM</span></span>
+<span><span class="co">##     IRanges                           * 2.34.1     2023-06-22 [1] Bioconductor</span></span>
+<span><span class="co">##     isoband                             0.2.7      2022-12-20 [1] RSPM</span></span>
+<span><span class="co">##     iterators                           1.0.14     2022-02-05 [1] RSPM</span></span>
+<span><span class="co">##     janeaustenr                         1.0.0      2022-08-26 [1] RSPM</span></span>
+<span><span class="co">##     jpeg                                0.1-10     2022-11-29 [1] RSPM</span></span>
+<span><span class="co">##     jquerylib                           0.1.4      2021-04-26 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     jsonlite                            1.8.4      2022-12-06 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     KEGGREST                            1.40.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     KernSmooth                          2.23-20    2021-05-03 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     knitr                               1.42       2023-01-25 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     labeling                            0.4.2      2020-10-20 [1] RSPM</span></span>
+<span><span class="co">##     lambda.r                            1.2.4      2019-09-18 [1] RSPM</span></span>
+<span><span class="co">##     later                               1.3.0      2021-08-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     lattice                             0.21-8     2023-04-05 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     latticeExtra                        0.6-30     2022-07-04 [1] RSPM</span></span>
+<span><span class="co">##     lazyeval                            0.2.2      2019-03-15 [1] RSPM</span></span>
+<span><span class="co">##     lifecycle                           1.0.3      2022-10-07 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     limma                               3.56.2     2023-06-04 [1] Bioconductor</span></span>
+<span><span class="co">##     littler                             0.3.18     2023-03-26 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     locfit                              1.5-9.8    2023-06-11 [1] RSPM</span></span>
+<span><span class="co">##     magrittr                            2.0.3      2022-03-30 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     MASS                                7.3-59     2023-04-21 [2] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     Matrix                              1.5-4      2023-04-04 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     MatrixGenerics                      1.12.3     2023-07-30 [1] Bioconductor</span></span>
+<span><span class="co">##     matrixStats                         1.0.0      2023-06-02 [1] RSPM</span></span>
+<span><span class="co">##     memoise                             2.0.1      2021-11-26 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     methods                           * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     mgcv                                1.8-42     2023-03-02 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     mime                                0.12       2021-09-28 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     miniUI                              0.1.1.1    2018-05-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     multiHiCcompare                     1.18.1     2023-07-02 [1] Bioconductor</span></span>
+<span><span class="co">##     munsell                             0.5.0      2018-06-12 [1] RSPM</span></span>
+<span><span class="co">##     nlme                                3.1-162    2023-01-31 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     nnet                                7.3-18     2022-09-28 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     openssl                             2.0.6      2023-03-09 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     OrganismDbi                         1.42.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     packrat                             0.9.1      2023-02-27 [1] RSPM</span></span>
+<span><span class="co">##     pak                                 0.5.1.9000 2023-08-02 [1] local</span></span>
+<span><span class="co">##     parallel                            4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     patchwork                           1.1.2      2022-08-19 [1] RSPM</span></span>
+<span><span class="co">##     pbapply                             1.7-2      2023-06-27 [1] RSPM</span></span>
+<span><span class="co">##     pheatmap                            1.0.12     2019-01-04 [1] RSPM</span></span>
+<span><span class="co">##     pillar                              1.9.0      2023-03-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     pkgbuild                            1.4.0      2022-11-27 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     pkgconfig                           2.0.3      2019-09-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     pkgdown                             2.0.7      2022-12-14 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     pkgload                             1.3.2      2022-11-16 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##   R plogr                               &lt;NA&gt;       &lt;NA&gt;       [?] &lt;NA&gt;</span></span>
+<span><span class="co">##     plotly                              4.10.2     2023-06-03 [1] RSPM</span></span>
+<span><span class="co">##     plyr                                1.8.8      2022-11-11 [1] RSPM</span></span>
+<span><span class="co">##     png                                 0.1-8      2022-11-29 [1] RSPM</span></span>
+<span><span class="co">##     praise                              1.0.0      2015-08-11 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     preprocessCore                      1.62.1     2023-05-02 [1] Bioconductor</span></span>
+<span><span class="co">##     prettyunits                         1.1.1      2020-01-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     processx                            3.8.1      2023-04-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     profvis                             0.3.7      2020-11-02 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     progress                            1.2.2      2019-05-16 [1] RSPM</span></span>
+<span><span class="co">##     promises                            1.2.0.1    2021-02-11 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     ProtGenerics                        1.32.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     ps                                  1.7.5      2023-04-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     purrr                               1.0.1      2023-01-10 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     qqman                               0.1.8      2021-04-19 [1] RSPM</span></span>
+<span><span class="co">##     quarto                              1.2        2022-07-06 [1] RSPM</span></span>
+<span><span class="co">##     R6                                  2.5.1      2021-08-19 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     ragg                                1.2.5      2023-01-12 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     rappdirs                            0.3.3      2021-01-31 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     RBGL                                1.76.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     rcmdcheck                           1.4.0      2021-09-27 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     RColorBrewer                        1.1-3      2022-04-03 [1] RSPM</span></span>
+<span><span class="co">##     Rcpp                                1.0.10     2023-01-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##   R RcppArmadillo                       &lt;NA&gt;       &lt;NA&gt;       [?] &lt;NA&gt;</span></span>
+<span><span class="co">##   R RcppEigen                           &lt;NA&gt;       &lt;NA&gt;       [?] &lt;NA&gt;</span></span>
+<span><span class="co">##   R RcppGSL                             &lt;NA&gt;       &lt;NA&gt;       [?] &lt;NA&gt;</span></span>
+<span><span class="co">##     RcppTOML                            0.2.2      2023-01-29 [1] RSPM</span></span>
+<span><span class="co">##     RcppZiggurat                        0.1.6      2020-10-20 [1] RSPM</span></span>
+<span><span class="co">##     RCurl                               1.98-1.12  2023-03-27 [1] RSPM</span></span>
+<span><span class="co">##     readr                               2.1.4      2023-02-10 [1] RSPM</span></span>
+<span><span class="co">##     rebook                              1.10.1     2023-05-25 [1] Bioconductor</span></span>
+<span><span class="co">##     rematch2                            2.1.2      2020-05-01 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     remotes                             2.4.2      2021-11-30 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     renv                                1.0.1      2023-08-10 [1] RSPM</span></span>
+<span><span class="co">##     reshape                             0.8.9      2022-04-12 [1] RSPM</span></span>
+<span><span class="co">##     reshape2                            1.4.4      2020-04-09 [1] RSPM</span></span>
+<span><span class="co">##     restfulr                            0.0.15     2022-06-16 [1] RSPM</span></span>
+<span><span class="co">##     reticulate                          1.31       2023-08-10 [1] RSPM</span></span>
+<span><span class="co">##     Rfast                               2.0.8      2023-07-03 [1] RSPM</span></span>
+<span><span class="co">##     rhdf5                               2.44.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     rhdf5filters                        1.12.1     2023-04-30 [1] Bioconductor</span></span>
+<span><span class="co">##     Rhdf5lib                            1.22.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     Rhtslib                             2.2.0      2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     rjson                               0.2.21     2022-01-09 [1] RSPM</span></span>
+<span><span class="co">##     rlang                               1.1.1      2023-04-28 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     rmarkdown                           2.21       2023-03-26 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     rmdformats                          1.0.4      2022-05-17 [1] RSPM</span></span>
+<span><span class="co">##     roxygen2                            7.2.3      2022-12-08 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     rpart                               4.1.19     2022-10-21 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     rprojroot                           2.0.3      2022-04-02 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     Rsamtools                           2.16.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     rsconnect                           1.0.1      2023-07-20 [1] RSPM</span></span>
+<span><span class="co">##     RSpectra                            0.16-1     2022-04-24 [1] RSPM</span></span>
+<span><span class="co">##     RSQLite                             2.3.1      2023-04-03 [1] RSPM</span></span>
+<span><span class="co">##     rstudioapi                          0.14       2022-08-22 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     rtracklayer                         1.60.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     rversions                           2.1.2      2022-08-31 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     S4Arrays                            1.0.5      2023-07-24 [1] Bioconductor</span></span>
+<span><span class="co">##     S4Vectors                         * 0.38.1     2023-05-02 [1] Bioconductor</span></span>
+<span><span class="co">##     sass                                0.4.5      2023-01-24 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     scales                              1.2.1      2022-08-20 [1] RSPM</span></span>
+<span><span class="co">##     sessioninfo                         1.2.2      2021-12-06 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     shiny                               1.7.4      2022-12-15 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     ShortRead                           1.58.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     snow                                0.4-4      2021-10-27 [1] RSPM</span></span>
+<span><span class="co">##     SnowballC                           0.7.1      2023-04-25 [1] RSPM</span></span>
+<span><span class="co">##     sourcetools                         0.1.7-1    2023-02-01 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     spatial                             7.3-16     2023-01-23 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     splines                             4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     stats                             * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     stats4                            * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     strawr                              0.0.91     2023-03-29 [1] RSPM</span></span>
+<span><span class="co">##     stringdist                          0.9.10     2022-11-07 [1] RSPM</span></span>
+<span><span class="co">##     stringi                             1.7.12     2023-01-11 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     stringr                             1.5.0      2022-12-02 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     SummarizedExperiment                1.30.2     2023-06-06 [1] Bioconductor</span></span>
+<span><span class="co">##     survival                            3.5-5      2023-03-12 [2] CRAN (R 4.3.0)</span></span>
+<span><span class="co">##     sys                                 3.4.1      2022-10-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     systemfonts                         1.0.4      2022-02-11 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     tcltk                               4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     terra                               1.7-39     2023-06-23 [1] RSPM</span></span>
+<span><span class="co">##     testthat                            3.1.7      2023-03-12 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     textshaping                         0.3.6      2021-10-13 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     tibble                              3.2.1      2023-03-20 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     tidyr                               1.3.0      2023-01-24 [1] RSPM</span></span>
+<span><span class="co">##     tidyselect                          1.2.0      2022-10-10 [1] RSPM</span></span>
+<span><span class="co">##     tidytext                            0.4.1      2023-01-07 [1] RSPM</span></span>
+<span><span class="co">##     tinytex                             0.45       2023-04-18 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     tokenizers                          0.3.0      2022-12-22 [1] RSPM</span></span>
+<span><span class="co">##     tools                               4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     TopDom                              0.10.1     2021-05-06 [1] RSPM</span></span>
+<span><span class="co">##     tzdb                                0.4.0      2023-05-12 [1] RSPM</span></span>
+<span><span class="co">##     urlchecker                          1.0.1      2021-11-30 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     usethis                             2.1.6      2022-05-25 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     utf8                                1.2.3      2023-01-31 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     utils                             * 4.3.0      2023-04-26 [2] local</span></span>
+<span><span class="co">##     VariantAnnotation                   1.46.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     vctrs                               0.6.2      2023-04-19 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     vipor                               0.4.5      2017-03-22 [1] RSPM</span></span>
+<span><span class="co">##     viridis                             0.6.4      2023-07-22 [1] RSPM</span></span>
+<span><span class="co">##     viridisLite                         0.4.2      2023-05-02 [1] RSPM</span></span>
+<span><span class="co">##     vroom                               1.6.3      2023-04-28 [1] RSPM</span></span>
+<span><span class="co">##     waldo                               0.4.0      2022-03-16 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     WGCNA                               1.72-1     2023-01-18 [1] RSPM</span></span>
+<span><span class="co">##     whisker                             0.4.1      2022-12-05 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     withr                               2.5.0      2022-03-03 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     xfun                                0.39       2023-04-20 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     XML                                 3.99-0.14  2023-03-19 [1] RSPM</span></span>
+<span><span class="co">##     xml2                                1.3.4      2023-04-27 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     xopen                               1.0.0      2018-09-17 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     xtable                              1.8-4      2019-04-21 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     XVector                             0.40.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##     yaml                                2.3.7      2023-01-23 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     yesno                               0.1.2      2020-07-10 [1] RSPM</span></span>
+<span><span class="co">##     zip                                 2.3.0      2023-04-17 [1] RSPM (R 4.3.0)</span></span>
+<span><span class="co">##     zlibbioc                            1.46.0     2023-04-25 [1] Bioconductor</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##   [1] /usr/local/lib/R/site-library</span></span>
+<span><span class="co">##   [2] /usr/local/lib/R/library</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##   R ── Package was removed from disk.</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  ─ Python configuration ────────────────────────────────────────────────────</span></span>
+<span><span class="co">##   python:         /github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env/bin/python</span></span>
+<span><span class="co">##   libpython:      /github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env/lib/libpython3.7m.so</span></span>
+<span><span class="co">##   pythonhome:     /github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env:/github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env</span></span>
+<span><span class="co">##   version:        3.7.12 | packaged by conda-forge | (default, Oct 26 2021, 06:08:53)  [GCC 9.4.0]</span></span>
+<span><span class="co">##   numpy:          /github/home/.cache/R/basilisk/1.12.1/HiCool/1.0.0/env/lib/python3.7/site-packages/numpy</span></span>
+<span><span class="co">##   numpy_version:  1.21.6</span></span>
+<span><span class="co">##   </span></span>
+<span><span class="co">##   NOTE: Python version was forced by use_python() function</span></span>
+<span><span class="co">##  </span></span>
+<span><span class="co">##  ───────────────────────────────────────────────────────────────────────────</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../pages/slides.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Package presentation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../pages/visualizing.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Visualizing Hi-C data in R</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">This book was built with <a href="https://github.com/js2264/BiocBook/">BiocBook</a> with <span class="emoji" data-emoji="heart">❤️</span></div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+</body></html>
