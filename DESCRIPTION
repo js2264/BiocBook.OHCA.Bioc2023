@@ -28,7 +28,15 @@ Imports:
     WGCNA, 
     Rfast,
     terra, 
-    patchwork
+    patchwork, 
+    strawr, 
+    hicrep,
+    multiHiCcompare,
+    TopDom, 
+    GOTHiC, 
+    BSgenome.Hsapiens.UCSC.hg38, 
+    ggbio,
+    fs
 Suggests:
     glue,
     rebook,
@@ -36,7 +44,8 @@ Suggests:
     knitr, 
     quarto
 Remotes:
-    github::js2264/BiocBook
+    github::js2264/BiocBook, 
+    github::TaoYang-dev/hicrep
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
