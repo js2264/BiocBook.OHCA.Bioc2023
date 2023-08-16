@@ -7,7 +7,7 @@ book:
     - pages/visualizing.qmd
     - pages/investigating.qmd
     - pages/interoperability.qmd
-  cover-image: inst/assets/cover.png
+  cover-image: inst/assets/cover.jpg
   favicon: inst/assets/favicon.png
   sidebar: 
     tools:
